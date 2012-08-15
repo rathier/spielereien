@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+
+#cleanup files based on timestamp in name, not mtime or atime
+# generate a list of days: for day in {0..20}; do echo $(date -d "-${day} days" +%F); done
+
+# FILTER=$(for i in {0..14}; do echo -n $(date -d "-${i} days" +%F)"|"; done)
+# filter can be used with extended globbing
+# ls foo!(${FILTER})
+
+shopt -s extglob
+cleanup_old_stuff () {
+  ## usage: cleanup_old_stuff #days_to_keep file_base formatstring_date
+  ## it needs adjustment, if the date isn't the last part of the filename
+  ## maybe a fourth parameter for a postfix
+  KEEP_DAYS=${1:-14} # would keep 14 plus one files
+  FILE_BASE=${2:-foo_}
+  DATE_FORMAT=${3:-"%F"} # %F: YYYY-MM-DD
+  FILTER=$(for i in $(eval echo {0..$((--KEEP_DAYS))}); do echo -n $(date -d "-${i} days" +${DATE_FORMAT})"|"; done)
+  echo ""
+  echo "FILTER: $FILTER"
+  echo "to remove:"
+  ls ${FILE_BASE}!(${FILTER})
+  # play it save with echo
+  echo rm ${FILE_BASE}!(${FILTER})
+
+  echo ""
+  echo keep
+  ls ${FILE_BASE}@(${FILTER})
+  echo ""
+}
+
+mkdir -p ${HOME}/tmp/logdir1
+cd ${HOME}/tmp/logdir1
+# generate some test data:
+for day in {0..30}; do touch foo_$(date -d "-${day} days" +%F); done
+
+cleanup_old_stuff 10 foo_ %F
+cleanup_old_stuff 4
+cleanup_old_stuff
+
+
+mkdir -p ${HOME}/tmp/logdir2
+cd ${HOME}/tmp/logdir2
+# generate some test data:
+for day in {0..30}; do touch bar_$(date -d "-${day} days" +%d-%m-%Y); done
+
+cleanup_old_stuff 10 bar_ %d-%m-%Y
