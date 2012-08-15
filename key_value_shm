@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+
+# keep key-value in /dev/shm
+## http://stackoverflow.com/questions/688849/associative-arrays-in-shell-scripts
+prefix=$(basename $0)
+tempdir_base=/dev/shm/${USER}
+delete_tempdir_base=1
+[ -d ${tempdir_base} ] && delete_tempdir_base=0 || mkdir ${tempdir_base}
+mapdir=$(mktemp --tmpdir=${tempdir_base}/ -d ${prefix}.XXXXXX)
+trap 'cleanup' EXIT
+
+cleanup() {
+  rm -r ${mapdir}
+  [ ${delete_tempdir_base} -eq 1 ] && rmdir ${tempdir_base}
+}
+
+put() {
+  [ "$#" != 3 ] && exit 1
+  mapname=$1; key=$2; value=$3
+  [ -d "${mapdir}/${mapname}" ] || mkdir "${mapdir}/${mapname}"
+  echo $value >"${mapdir}/${mapname}/${key}"
+}
+
+get() {
+  [ "$#" != 2 ] && exit 1
+  mapname=$1; key=$2
+  cat "${mapdir}/${mapname}/${key}"
+}
+
+#put "newMap" "name" "Rainer"
+#put "newMap" "foo" "bar"
+
+#value=$(get "newMap" "foo")
+#echo $value
+
+#value=$(get "newMap" "name")
+#echo $value
+
+# for loop doesn't work that easy, it uses spaces not linebreaks
+#for line in $(getent passwd|tail -n10); do
+getent passwd | while read line; do
+#  echo "${line}"
+  key=${line%%:*}
+  value="${line#*:}"
+  put PasswdEntry ${key} "${value}"
+done
+
+get PasswdEntry gdm
+get PasswdEntry syslog
+get PasswdEntry root
+
+echo "how many key value pairs: $(ls -1 ${mapdir}/${mapname}/* | wc -l)"
+
