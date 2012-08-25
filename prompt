@@ -19,7 +19,7 @@ prompt_normal() {
 
 prompt_minimal() {
   unset PROMPT_COMMAND
-  PS1='\$'
+  PS1='\$ '
 }
 
 
