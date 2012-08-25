@@ -1,0 +1,27 @@
+# just source the file and use the functions to change your prompt
+prompt_ubuntu_color() {
+  unset PROMPT_COMMAND
+  PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+}
+
+prompt_ubuntu_default() {
+  unset PROMPT_COMMAND
+  PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
+}
+
+prompt_normal() {
+  PROMPT_COMMAND='RES=$?; [[ ${RES} -ne 0 ]] && RES_PROMPT="\[\033[0;31m\][${RES}]\[\033[0m\]" || RES_PROMPT=""; history -a; PS1="${RES_PROMPT}[\A][\!][\u@\h] \w \$ "'
+}
+#PROMPT_COMMAND='RES=$?; [[ ${RES} -eq 0 ]] && RCCOL=34 || RCCOL=31 ; history -a ; PS1="\[\033[0;${RCCOL}m\][${RES}]\[\033[0m\] [\A][\!][\u@\h] \w \$ "'
+#    PS1='\u@\h:\w\$ '
+#    PS1="[\033[00;34m\]\u\033[0m\]@\033[01;34m\]\h\033[0m\]:\w]\$ "
+#    PS1='[\033[00;34m\u\033[m@\033[1;34m\h\033[m:\w]\$ '
+
+prompt_minimal() {
+  unset PROMPT_COMMAND
+  PS1='\$'
+}
+
+
+# modeline
+# vim: ft=sh
