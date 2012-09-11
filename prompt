@@ -26,6 +26,9 @@ prompt_minimal() {
   PS1='\$ '
 }
 
+prompt_utf8(){
+  PROMPT_COMMAND='RES=$?; [[ ${RES} -ne 0 ]] && RES_PROMPT="\[\033[0;31m\]✗\[\033[0m\] (${RES})" || RES_PROMPT="\[\033[0;32m\]✓\[\033[0m\]"; history -a; PS1="[${RES_PROMPT}][\A][\!][\u@\h] \w \$ "'
+}
 
 # modeline
 # vim: ft=sh
