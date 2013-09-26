@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-SQLITE=/usr/bin/sqlite
+SQLITE=/usr/bin/sqlite3
 DATABASE=~/dbase.db
 
 # sqlite
