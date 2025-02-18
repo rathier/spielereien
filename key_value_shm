@@ -45,9 +45,10 @@ getent passwd | while read line; do
   put PasswdEntry ${key} "${value}"
 done
 
-get PasswdEntry gdm
-get PasswdEntry syslog
+get PasswdEntry news
+get PasswdEntry sys
 get PasswdEntry root
+get PasswdEntry lp
 
 echo "how many key value pairs: $(ls -1 ${mapdir}/${mapname}/* | wc -l)"
 
